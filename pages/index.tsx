@@ -1,13 +1,16 @@
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import DonationsPanel from "../components/DonationsPanel";
 
+interface Phantom {}
+
 const Home: NextPage = () => {
   return (
     <div className="w-full bg-black text-white antialiased">
       <Head>
-        <title>Buymeapizza</title>
+        <title>Buy Me a Pizza</title>
         <meta
           name="description"
           content="SEAMLESS DONATIONS IN CRYPTO FOR FREE"
@@ -20,9 +23,7 @@ const Home: NextPage = () => {
           <h1 className="flex py-2 text-lg font-extrabold text-primary-500 sm:text-3xl">
             #BUYMEAPIZZA
           </h1>
-          <button className="rounded-sm bg-primary-500  px-2 py-1 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
-            CONNECT YOUR WALLET
-          </button>
+          <WalletMultiButton />
         </div>
       </header>
 
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
                   className="w-24 bg-black text-neutral-500 outline-none"
                 />
               </span>
-              <button className="rounded-sm bg-primary-500  px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
+              <button className="rounded-sm bg-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
                 CLAIM THIS USERNAME
               </button>
             </div>
@@ -55,6 +56,7 @@ const Home: NextPage = () => {
             alt="Picture of the something nice"
             width={1}
             height={1}
+            priority
             layout="responsive"
             objectFit="contain"
           />
