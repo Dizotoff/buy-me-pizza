@@ -29,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const { data: userData, error } = await supabaseAdmin
         .from("users")
-        .select("*, profiles_id_fkey(*)")
+        .select("*, profile:profiles_id_fkey(*)!inner")
         .eq("wallet_address", walletAddress)
         .eq("nonce", new TextDecoder().decode(nonceUint8))
         .single();

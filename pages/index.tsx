@@ -1,12 +1,80 @@
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import classNames from "classnames";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import DonationsPanel from "../components/DonationsPanel";
-
-interface Phantom {}
+import { WalletMultiButton } from "../components/WalletConnect";
+import { useGetUser, useSetUser } from "../context/AuthProvider";
+import { supabase } from "../utils/supabaseClient";
 
 const Home: NextPage = () => {
+  const user = useGetUser();
+  const setUser = useSetUser();
+  const { setVisible } = useWalletModal();
+
+  const [inputValue, setInputValue] = useState<string>("");
+  const [isUsernameAvaliable, setIsUsernameAvaliable] =
+    useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleButtonClick = async () => {
+    if (!user) {
+      setVisible(true);
+    }
+
+    if (!isLoading && isUsernameAvaliable && inputValue !== "" && user) {
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ username: inputValue })
+        .eq("id", user?.id)
+        .single();
+
+      if (error) {
+        console.log("Failed to set username", error);
+      }
+
+      if (data) {
+        setUser({ ...user, username: data.username });
+      }
+    }
+  };
+
+  const checkUsernameAvailability = async (username: string) => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", username);
+
+    if (error) {
+      console.log("Failed to check username availability");
+    }
+
+    if (data?.length === 0) {
+      setIsUsernameAvaliable(true);
+    } else {
+      setIsUsernameAvaliable(false);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    setIsLoading(true);
+
+    if (inputValue !== "" && user) {
+      timer = setTimeout(() => {
+        checkUsernameAvailability(inputValue);
+      }, 500);
+    }
+    setIsLoading(false);
+
+    return () => clearInterval(timer);
+  }, [inputValue]);
+
   return (
     <div className="w-full bg-black text-white antialiased">
       <Head>
@@ -38,18 +106,40 @@ const Home: NextPage = () => {
             <p className="pt-3 text-sm text-neutral-500 sm:text-base">
               Helping creators one pizza at a time
             </p>
-            <div className="mt-16 box-content flex w-full flex-col items-center justify-center gap-4 align-middle sm:flex-row">
-              <span className="flex rounded-md border border-neutral-900 px-6  py-3">
-                <p className="pr-1 text-neutral-500">buymeapizza.xyz/</p>
-                <input
-                  placeholder="yourname"
-                  className="w-24 bg-black text-neutral-500 outline-none"
-                />
-              </span>
-              <button className="rounded-sm bg-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
-                CLAIM THIS USERNAME
-              </button>
-            </div>
+            {!user?.username && (
+              <div className="mt-16 box-content flex w-full flex-col items-center justify-center gap-4 align-middle sm:flex-row">
+                <span
+                  className={classNames(
+                    "flex rounded-md border border-neutral-900 px-6 py-3",
+
+                    {
+                      "border-yellow":
+                        !isLoading && !isUsernameAvaliable && inputValue != "",
+                    }
+                  )}
+                >
+                  <p className="pr-1 text-neutral-500">buymeapizza.xyz/</p>
+                  <input
+                    onChange={(event) => {
+                      setInputValue(event.target.value);
+                    }}
+                    value={inputValue}
+                    placeholder="yourname"
+                    className="w-24 bg-black text-neutral-500 outline-none"
+                  />
+                </span>
+                <button
+                  onClick={() => handleButtonClick()}
+                  className="rounded-sm bg-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base"
+                >
+                  CLAIM THIS USERNAME
+                </button>
+              </div>
+            )}
+
+            {!isLoading && !isUsernameAvaliable && inputValue != "" && (
+              <p className="text-yellow">This username is already registered</p>
+            )}
           </div>
           <Image
             src={"/images/pizza-toxic.png"}
