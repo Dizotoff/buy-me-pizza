@@ -10,11 +10,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (!walletAddress) res.status(400).end(`walletAddress was not provided`);
 
-      const { data: isUserExist, error } = await supabaseAdmin
+      const { data, error } = await supabaseAdmin
         .from("users")
         .select("id")
-        .eq("wallet_address", walletAddress)
-        .single();
+        .eq("wallet_address", walletAddress);
 
       if (error) {
         res
@@ -25,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const nonce = `Hi! You know, for authentication 
       ${v4()}`;
 
-      if (!!isUserExist) {
+      if (data && data?.length > 0) {
         const { error } = await supabaseAdmin
           .from("users")
           .update({ nonce })

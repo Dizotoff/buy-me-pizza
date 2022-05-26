@@ -3,6 +3,7 @@ import classNames from "classnames";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button } from "../components/Button";
 import DonationsPanel from "../components/DonationsPanel";
@@ -14,6 +15,7 @@ const Home: NextPage = () => {
   const user = useGetUser();
   const setUser = useSetUser();
   const { setVisible } = useWalletModal();
+  const router = useRouter();
 
   const [inputValue, setInputValue] = useState<string>("");
   const [isUsernameAvaliable, setIsUsernameAvaliable] =
@@ -38,6 +40,7 @@ const Home: NextPage = () => {
 
       if (data) {
         setUser({ ...user, username: data.username });
+        router.push(`/${data.username}`);
       }
     }
   };
@@ -105,7 +108,10 @@ const Home: NextPage = () => {
 
                     {
                       "border-yellow":
-                        !isLoading && !isUsernameAvaliable && inputValue != "",
+                        !isLoading &&
+                        !isUsernameAvaliable &&
+                        inputValue != "" &&
+                        !!user,
                     }
                   )}
                 >
@@ -119,13 +125,17 @@ const Home: NextPage = () => {
                     className="w-24 bg-black text-neutral-500 outline-none"
                   />
                 </span>
-                <Button onClick={() => handleButtonClick()}>
+                <Button
+                  disabled={!isLoading && !isUsernameAvaliable && !!user}
+                  onClick={() => handleButtonClick()}
+                  isLoading={isLoading}
+                >
                   CLAIM THIS USERNAME
                 </Button>
               </div>
             )}
 
-            {!isLoading && !isUsernameAvaliable && inputValue != "" && (
+            {!isUsernameAvaliable && inputValue != "" && user && (
               <p className="text-yellow">This username is already registered</p>
             )}
           </div>
