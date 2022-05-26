@@ -1,11 +1,12 @@
 import React from "react";
 import Image from "next/image";
+import { Button } from "./Button";
 
-const DonationsPanel = ({}) => {
+const DonationsPanel = ({ name = "John" }: { name?: string }) => {
   return (
     <div className="max-w-xl">
       <h2 className="text-center text-3xl font-bold text-white">
-        DONATE SOME PIZZAS TO JOHN
+        DONATE SOME PIZZAS TO {name?.toUpperCase()}
       </h2>
       <div className="grid grid-cols-4 gap-8 py-10">
         {[1, 2, 3, 4].map((index) => (
@@ -27,12 +28,8 @@ const DonationsPanel = ({}) => {
         ))}
       </div>
       <div className="flex justify-around">
-        <button className="rounded-sm border border-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
-          ADD YOURS{" "}
-        </button>
-        <button className="rounded-sm bg-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
-          DONATE{" "}
-        </button>
+        <Button onClick={() => {}}>ADD YOURS</Button>
+        <Button onClick={() => {}}>DONATE</Button>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import {
   WalletIcon,
   WalletModalButton,
 } from "@solana/wallet-adapter-react-ui";
+import Link from "next/link";
 import React, {
   FC,
   ReactElement,
@@ -15,13 +16,14 @@ import React, {
   useState,
 } from "react";
 import { useCookies } from "react-cookie";
-import { useLogout } from "../context/AuthProvider";
+import { useGetUser, useLogout } from "../context/AuthProvider";
 import { supabase } from "../utils/supabaseClient";
 
 export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
   const { publicKey, wallet } = useWallet();
   const { setVisible } = useWalletModal();
   const logout = useLogout();
+  const user = useGetUser();
   const [copied, setCopied] = useState(false);
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
@@ -84,6 +86,7 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
       <Button
         aria-expanded={active}
         className="wallet-adapter-button-trigger"
+        //@ts-ignore
         style={{ pointerEvents: active ? "none" : "auto", ...props.style }}
         onClick={openDropdown}
         startIcon={<WalletIcon wallet={wallet} />}
@@ -99,20 +102,14 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
         ref={ref}
         role="menu"
       >
-        <li
-          onClick={copyAddress}
-          className="wallet-adapter-dropdown-list-item"
-          role="menuitem"
-        >
-          {copied ? "Copied" : "Copy address"}
-        </li>
-        <li
-          onClick={openModal}
-          className="wallet-adapter-dropdown-list-item"
-          role="menuitem"
-        >
-          Change wallet
-        </li>
+        {user?.username && (
+          <Link href={`/${user?.username}`}>
+            <li className="wallet-adapter-dropdown-list-item" role="menuitem">
+              My page
+            </li>
+          </Link>
+        )}
+
         <li
           onClick={() => logout()}
           className="wallet-adapter-dropdown-list-item"
@@ -132,7 +129,7 @@ export interface ButtonProps {
   onClick?: () => void;
   startIcon?: ReactElement;
   tabIndex?: number;
-  children?: ReactElement;
+  children?: any;
 }
 
 export const Button: FC<ButtonProps> = (props) => {

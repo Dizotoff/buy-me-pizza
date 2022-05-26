@@ -4,6 +4,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Button } from "../components/Button";
 import DonationsPanel from "../components/DonationsPanel";
 import { WalletMultiButton } from "../components/WalletConnect";
 import { useGetUser, useSetUser } from "../context/AuthProvider";
@@ -76,26 +77,16 @@ const Home: NextPage = () => {
   }, [inputValue]);
 
   return (
-    <div className="w-full bg-black text-white antialiased">
+    <>
       <Head>
         <title>Buy Me a Pizza</title>
         <meta
           name="description"
           content="SEAMLESS DONATIONS IN CRYPTO FOR FREE"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="flex h-20 flex-col justify-center bg-black">
-        <div className="mx-auto flex w-full max-w-screen-2xl justify-between px-4 sm:px-16 ">
-          <h1 className="flex py-2 text-lg font-extrabold text-primary-500 sm:text-3xl">
-            #BUYMEAPIZZA
-          </h1>
-          <WalletMultiButton />
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-screen-2xl px-4 sm:px-16">
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
         {/*Accept donation in crypto... banner*/}
         <section className="grid grid-cols-1 items-center justify-between gap-20 py-24 sm:grid-cols-2  sm:gap-0 sm:py-52">
           <div>
@@ -128,12 +119,9 @@ const Home: NextPage = () => {
                     className="w-24 bg-black text-neutral-500 outline-none"
                   />
                 </span>
-                <button
-                  onClick={() => handleButtonClick()}
-                  className="rounded-sm bg-primary-500 px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base"
-                >
+                <Button onClick={() => handleButtonClick()}>
                   CLAIM THIS USERNAME
-                </button>
+                </Button>
               </div>
             )}
 
@@ -243,14 +231,8 @@ const Home: NextPage = () => {
             </article>
           </div>
         </section>
-      </main>
-
-      <footer>
-        <h3 className="py-6 text-center text-neutral-700">
-          Made with pizzas inside a rented apartment
-        </h3>
-      </footer>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,32 +1,109 @@
-import type { NextPage } from "next";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Button } from "../components/Button";
 import DonationsPanel from "../components/DonationsPanel";
+import { Modal } from "../components/Modal";
+import { Profile } from "../models/profile";
+import { supabase } from "../utils/supabaseClient";
 
-const UserPage: NextPage = () => {
+const UserPage = ({ profile }: { profile: Profile }) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [usernameValue, setUsernameValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUsernameAvaliable, setIsUsernameAvaliable] =
+    useState<boolean>(false);
+  const router = useRouter();
+
+  const handleUsernameSubmit = async () => {
+    const { data, error } = await supabase
+      .from<Profile>("profiles")
+      .update({ username: usernameValue })
+      .match({ username: profile.username });
+
+    if (error) {
+      console.log("Failed to update username");
+    }
+
+    if (data) {
+      router.push(`/${usernameValue}`);
+      setIsModalOpen(false);
+    }
+  };
+
+  const checkUsernameAvailability = async (username: string) => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", username);
+
+    if (error) {
+      console.log("Failed to check username availability");
+    }
+
+    if (data?.length === 0) {
+      setIsUsernameAvaliable(true);
+    } else {
+      setIsUsernameAvaliable(false);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    setIsLoading(true);
+
+    if (usernameValue !== "") {
+      timer = setTimeout(() => {
+        checkUsernameAvailability(usernameValue);
+      }, 500);
+    }
+    setIsLoading(false);
+
+    return () => clearInterval(timer);
+  }, [usernameValue]);
+
   return (
     <div className="w-full bg-black text-white antialiased">
       <Head>
-        <title>Buymeapizza</title>
+        <title>Buy Me a Pizza - {profile.username}</title>
         <meta
           name="description"
-          content="SEAMLESS DONATIONS IN CRYPTO FOR FREE"
+          content={`${profile.username} accepts donation in Solana here`}
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <header className="flex h-20 flex-col justify-center bg-black">
-        <div className="mx-auto flex w-full max-w-screen-2xl justify-between px-4 sm:px-16 ">
-          <h1 className="flex py-2 text-lg font-extrabold text-primary-500 sm:text-3xl">
-            #BUYMEAPIZZA
-          </h1>
-          <button className="rounded-sm bg-primary-500  px-2 py-1 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
-            CONNECT YOUR WALLET
-          </button>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-screen-2xl px-4 sm:px-16">
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <>
+          <input
+            value={usernameValue}
+            onChange={(event) => {
+              setUsernameValue(event.target.value);
+            }}
+          ></input>
+          <Button
+            onClick={() => {
+              handleUsernameSubmit();
+            }}
+            disabled={!isUsernameAvaliable}
+          >
+            Update
+          </Button>
+          {!isUsernameAvaliable && (
+            <p className="text-xs text-primary-500">
+              Username is not avaliable, try a different one
+            </p>
+          )}
+        </>
+      </Modal>
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
         <div className="flex items-center justify-between py-6">
           <span className="flex w-fit items-center gap-6">
             <figure className="relative mx-auto h-28 w-28">
@@ -37,10 +114,16 @@ const UserPage: NextPage = () => {
                 src={"/images/pizza-toxic.png"}
               ></Image>
             </figure>
-            <p className="text-xl font-extrabold text-primary-100">OG LOCK</p>
-            <button className="rounded-sm bg-primary-500  px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base">
+            <p className="text-xl font-extrabold text-primary-100">
+              {profile.username}
+            </p>
+            <Button
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
               UPDATE NAME
-            </button>
+            </Button>
           </span>
           <span className="flex items-center gap-6">
             <Image
@@ -56,16 +139,51 @@ const UserPage: NextPage = () => {
         </div>
 
         <div className="grid min-h-screen grid-cols-2 pt-16">
-          <DonationsPanel />
+          <DonationsPanel name={profile.username} />
           <div className="flex max-h-96 items-center justify-center rounded-xl border border-neutral-700">
             <p className="text-xl font-extrabold text-primary-100">
               DONATION LEDGER
             </p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
+};
+
+export const getServerSideProps = async ({
+  params,
+}: GetServerSidePropsContext<{ username: string }>): Promise<
+  GetServerSidePropsResult<{ profile: Profile }>
+> => {
+  const username = params?.username;
+
+  /* Not Found */
+  if (!username) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("username", username)
+    .single();
+
+  if (error) {
+    console.log(`[Supabase]: Failed to user data`, error.message);
+  }
+
+  if (profile) {
+    return {
+      props: { profile },
+    };
+  } else {
+    return {
+      notFound: true,
+    };
+  }
 };
 
 export default UserPage;

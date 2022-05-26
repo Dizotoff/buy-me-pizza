@@ -19,7 +19,6 @@ create table profiles (
 
   primary key (id),
   unique(username),
-  constraint username_length check (char_length(username) >= 3)
 );
 
 create function public.handle_new_user_profile() 
@@ -38,3 +37,20 @@ $$;
 create trigger on_auth_user_created_profile
   after insert on public.users
   for each row execute procedure public.handle_new_user_profile();
+
+
+alter table "profiles" enable row level security;
+
+create policy "Users can update own profile."
+  on profiles for update
+  using ( auth.uid() = id );
+
+create policy "Profiles are viewable by everyone."
+  on profiles for select
+  using ( true );
+
+  alter table "users" enable row level security;
+
+  create policy "Users are viewable by everyone."
+  on users for select
+  using ( true );
