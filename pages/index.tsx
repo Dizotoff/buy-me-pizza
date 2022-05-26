@@ -126,7 +126,7 @@ const Home: NextPage = () => {
                   />
                 </span>
                 <Button
-                  disabled={!isLoading && !isUsernameAvaliable && !!user}
+                  disabled={isLoading || (!isUsernameAvaliable && !!user)}
                   onClick={() => handleButtonClick()}
                   isLoading={isLoading}
                 >
