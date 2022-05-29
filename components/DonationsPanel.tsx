@@ -9,7 +9,7 @@ import classNames from "classnames";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { supabase } from "../utils/supabaseClient";
 
-const donationOptionsUSD = [1, 5, 10, 20, 42];
+const donationOptionsUSD = [1, 5, 10, 20];
 
 const getSolFromUSD = (usdAmount: number, solPrice: number) => {
   const solAmount = ((1 * usdAmount) / solPrice).toFixed(2);
@@ -54,7 +54,7 @@ const DonationsPanel = ({
 
   const onDonateClick = useCallback(
     async (selectedOption: Donation) => {
-      if (!publicKey) {
+      if (!publicKey || !user?.id) {
         setVisible(true);
       } else if (toWalletAddress && publicKey) {
         const toPublicKey = new PublicKey(toWalletAddress);

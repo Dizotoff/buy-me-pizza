@@ -136,10 +136,14 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
             toWalletAddress={profile.users.wallet_address}
             toUserId={profile.id}
           />
-          <div className="flex max-h-96 items-center justify-center rounded-xl border border-neutral-700">
-            <p className="text-xl font-extrabold text-primary-100">
-              DONATION LEDGER
-            </p>
+          <div className="flex max-h-96 flex-col items-center justify-around rounded-xl border border-neutral-700">
+            <ul className="">
+              {profile.donations?.map((donation) => (
+                <li key={donation.id} className="list-disc text-neutral-700">
+                  Anonymous donated {donation.amount} Sol to {profile.username}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

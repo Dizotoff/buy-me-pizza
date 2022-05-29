@@ -70,3 +70,7 @@ alter table "donations" enable row level security;
 create policy "Users can insert their own donations."
   on "donations" for insert
   with check ( auth.uid() = from_id );
+
+create policy "Donations are viewable by everyone."
+  on donations for select
+  using ( true );
