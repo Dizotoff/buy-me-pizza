@@ -4,10 +4,11 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+
 import { Button } from "../components/Button";
 import DonationsPanel from "../components/DonationsPanel";
-import { WalletMultiButton } from "../components/WalletConnect";
 import { useGetUser, useSetUser } from "../context/AuthProvider";
 import { supabase } from "../utils/supabaseClient";
 
@@ -18,16 +19,13 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   const [inputValue, setInputValue] = useState<string>("");
-  const [isUsernameAvaliable, setIsUsernameAvaliable] =
-    useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleButtonClick = async () => {
     if (!user) {
       setVisible(true);
-    }
+    } else if (inputValue !== "" && user) {
+      const toastId = toast.loading("Claiming the username...");
 
-    if (!isLoading && isUsernameAvaliable && inputValue !== "" && user) {
       const { data, error } = await supabase
         .from("profiles")
         .update({ username: inputValue })
@@ -36,7 +34,10 @@ const Home: NextPage = () => {
 
       if (error) {
         console.log("Failed to set username", error);
+        toast.error("This username is already used");
       }
+
+      toast.dismiss(toastId);
 
       if (data) {
         setUser({ ...user, username: data.username });
@@ -44,40 +45,6 @@ const Home: NextPage = () => {
       }
     }
   };
-
-  const checkUsernameAvailability = async (username: string) => {
-    setIsLoading(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("username", username);
-
-    if (error) {
-      console.log("Failed to check username availability");
-    }
-
-    if (data?.length === 0) {
-      setIsUsernameAvaliable(true);
-    } else {
-      setIsUsernameAvaliable(false);
-    }
-
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    setIsLoading(true);
-
-    if (inputValue !== "" && user) {
-      timer = setTimeout(() => {
-        checkUsernameAvailability(inputValue);
-      }, 500);
-    }
-    setIsLoading(false);
-
-    return () => clearInterval(timer);
-  }, [inputValue]);
 
   return (
     <>
@@ -88,6 +55,7 @@ const Home: NextPage = () => {
           content="SEAMLESS DONATIONS IN CRYPTO FOR FREE"
         />
       </Head>
+      <Toaster />
 
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
         {/*Accept donation in crypto... banner*/}
@@ -104,15 +72,7 @@ const Home: NextPage = () => {
               <div className="mt-16 box-content flex w-full flex-col items-center justify-center gap-4 align-middle sm:flex-row">
                 <span
                   className={classNames(
-                    "flex rounded-md border border-neutral-900 px-6 py-3",
-
-                    {
-                      "border-yellow":
-                        !isLoading &&
-                        !isUsernameAvaliable &&
-                        inputValue != "" &&
-                        !!user,
-                    }
+                    "flex rounded-md border border-neutral-900 px-6 py-3"
                   )}
                 >
                   <p className="pr-1 text-neutral-500">buymeapizza.xyz/</p>
@@ -125,18 +85,10 @@ const Home: NextPage = () => {
                     className="w-24 bg-black text-neutral-500 outline-none"
                   />
                 </span>
-                <Button
-                  disabled={isLoading || (!isUsernameAvaliable && !!user)}
-                  onClick={() => handleButtonClick()}
-                  isLoading={isLoading}
-                >
+                <Button onClick={() => handleButtonClick()}>
                   CLAIM THIS USERNAME
                 </Button>
               </div>
-            )}
-
-            {!isUsernameAvaliable && inputValue != "" && user && (
-              <p className="text-yellow">This username is already registered</p>
             )}
           </div>
           <Image

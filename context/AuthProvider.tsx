@@ -6,12 +6,14 @@ import {
   useEffect,
   SetStateAction,
   Dispatch,
+  useCallback,
 } from "react";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import jwt from "jsonwebtoken";
 import { sign } from "tweetnacl";
 import { supabase } from "../utils/supabaseClient";
 import { useCookies } from "react-cookie";
+import toast, { Toaster } from "react-hot-toast";
 
 interface AuthProviderProps {
   children: ReactElement;
@@ -23,17 +25,21 @@ interface User {
   username?: string;
   avatar_url?: string;
   website?: string;
+  solPrice?: string;
 }
 
 export const UserContext = createContext<User | undefined>(undefined);
 export const SetUserContext = createContext<
   Dispatch<SetStateAction<User | undefined>>
 >(() => {});
+export const SolPriceContext = createContext<number | undefined>(undefined);
+export const LoadingContext = createContext<boolean>(false);
 
 export const LogOutContext = createContext<() => void>(() => {});
 
 const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [solPrice, setSolPrice] = useState<number>();
   const { publicKey, signMessage, disconnect } = useWallet();
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
@@ -66,6 +72,7 @@ const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     }
   };
   const authenticateWithNonce = async () => {
+    const toastId = toast.loading("Please sign the nonce...");
     try {
       if (!publicKey) throw new Error("Wallet not connected!");
       const walletAddress = publicKey?.toBase58();
@@ -85,7 +92,9 @@ const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       if (!nonce) throw new Error("API failed to fetch the nonce");
 
       if (!signMessage)
-        throw new Error("Wallet does not support message signing!");
+        throw new Error(
+          "Wallet does not support message signing! Please try another wallet provider"
+        );
       // Encode anything as bytes
       const encodedNonce = new TextEncoder().encode(nonce);
       // Sign the bytes using the wallet
@@ -124,9 +133,11 @@ const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
         walletAddress: user?.wallet_address,
         username: user.profile[0]?.username,
       });
+      toast.success("Authenticated!");
     } catch (error: any) {
       console.log(`Signing failed: ${error?.message}`);
     }
+    toast.dismiss(toastId);
   };
   const logout = () => {
     removeCookie("token", {
@@ -137,6 +148,15 @@ const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     supabase.auth.setAuth("");
     setUser(undefined);
   };
+
+  const getSolPrice = useCallback(async () => {
+    const response = await fetch(
+      "https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT"
+    );
+    const data = await response.json();
+    const price = data.price;
+    setSolPrice(Number(price));
+  }, []);
 
   useEffect(() => {
     if (publicKey && !user && !cookies.token) {
@@ -150,11 +170,21 @@ const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     }
   }, [publicKey, user, publicKey]);
 
+  useEffect(() => {
+    if (!solPrice) {
+      getSolPrice();
+    }
+  }, []);
+
   return (
     <UserContext.Provider value={user}>
       <SetUserContext.Provider value={setUser}>
         <LogOutContext.Provider value={logout}>
-          {children}
+          <SolPriceContext.Provider value={solPrice}>
+            <Toaster />
+
+            {children}
+          </SolPriceContext.Provider>
         </LogOutContext.Provider>
       </SetUserContext.Provider>
     </UserContext.Provider>
@@ -171,6 +201,11 @@ export function useSetUser() {
   return (user: User) => {
     setUser(user);
   };
+}
+
+export function useGetSolPrice() {
+  const solPrice = useContext(SolPriceContext);
+  return solPrice;
 }
 
 export function useLogout() {

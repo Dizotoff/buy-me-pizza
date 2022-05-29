@@ -54,3 +54,19 @@ create policy "Profiles are viewable by everyone."
   create policy "Users are viewable by everyone."
   on users for select
   using ( true );
+
+  -- Create a table for Public Profiles
+create table donations (
+  id uuid not null,
+  from_id uuid references "profiles"(id) not null,
+  to_id uuid references "profiles"(id) on delete cascade not null,
+  amount float not null,
+  createdAt timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (id)
+);
+
+alter table "donations" enable row level security;
+
+create policy "Users can insert their own donations."
+  on "donations" for insert
+  with check ( auth.uid() = from_id );
