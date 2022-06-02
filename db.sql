@@ -65,6 +65,9 @@ create table donations (
   primary key (id)
 );
 
+
+-- Create a table for Donations
+
 alter table "donations" enable row level security;
 
 create policy "Users can insert their own donations."
@@ -74,3 +77,22 @@ create policy "Users can insert their own donations."
 create policy "Donations are viewable by everyone."
   on donations for select
   using ( true );
+
+-- Create a storage
+
+insert into storage.buckets (id, name)
+values ('avatars', 'avatars');
+
+create policy "Avatar images are publicly accessible."
+  on storage.objects for select
+  using ( bucket_id = 'avatars' );
+
+create policy "Anyone can upload an avatar."
+  on storage.objects for insert
+  with check ( bucket_id = 'avatars' );
+
+-- Weird hack
+
+  alter table storage.objects
+drop constraint objects_owner_fkey
+
