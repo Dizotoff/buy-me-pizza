@@ -13,6 +13,7 @@ import { useGetUser } from "../context/AuthProvider";
 import { Profile } from "../models/profile";
 import { supabase } from "../utils/supabaseClient";
 import { v4 } from "uuid";
+import { truncateWallet } from "../utils/helpers";
 
 type ExtendedProfile = Profile & {
   users: { wallet_address: string };
@@ -132,7 +133,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
             CHOOSE A NEW USERNAME
           </h1>
           <input
-            className="rounded-md border border-neutral-900  bg-black py-2 pl-2 text-neutral-500 outline-none"
+            className="rounded-md border border-neutral-900  bg-black py-2 pl-2 text-neutral-500 outline-none focus:border-primary-500 active:border-primary-500"
             value={usernameValue}
             onChange={(event) => {
               setUsernameValue(event.target.value);
@@ -149,7 +150,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
         </>
       </Modal>
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
-        <div className="flex items-center justify-between py-6">
+        <div className="flex flex-col items-center justify-between gap-20 py-6 sm:flex-row sm:gap-0">
           <span className="flex w-fit items-center gap-6">
             <UploadableImage
               src={profile.avatar_url}
@@ -162,8 +163,8 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
               <p className="text-xl font-extrabold text-primary-100">
                 {profile.username}
               </p>
-              <p className="text-md w-20 truncate font-extrabold text-primary-100">
-                {profile.users.wallet_address}
+              <p className="text-md  font-extrabold text-primary-100">
+                {truncateWallet(profile.users.wallet_address)}
               </p>
             </div>
             {isCurrentUserOwner && (
@@ -175,40 +176,45 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
                 UPDATE NAME
               </Button>
             )}
-            <button onClick={async () => {}}>CLEAN MY BUCKET</button>
           </span>
-          <span className="flex items-center gap-6">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            className="group flex cursor-pointer gap-4 text-xl font-extrabold transition-all hover:text-primary-100"
+            href={`https://twitter.com/intent/tweet?text=Hey, you can buymea.pizza/${profile.username} with @Solana`}
+          >
             <Image
               src="/icons/twitter.svg"
               alt="twitter"
-              height={50}
-              width={50}
+              height={30}
+              width={30}
             />
-
-            <a
-              target="_blank"
-              rel="noreferrer"
-              className="cursor-pointer text-xl font-extrabold"
-              href={`https://twitter.com/intent/tweet?text=Hey, you can buymea.pizza/${profile.username} with @Solana`}
-            >
-              SHARE ON TWITTER
-            </a>
-          </span>
+            <p>SHARE ON TWITTER</p>
+          </a>
         </div>
 
-        <div className="grid min-h-screen grid-cols-2 pt-16">
+        <div className="grid min-h-screen grid-cols-1 gap-20 pb-16 pt-16 sm:grid-cols-2">
           <DonationsPanel
             name={profile.username}
             toWalletAddress={profile.users.wallet_address}
             toUserId={profile.id}
           />
-          <div className="flex max-h-96 flex-col items-center justify-around rounded-xl border border-neutral-700">
-            <ul className="">
+          <div className="flex max-h-96 flex-col items-center justify-start rounded-xl border border-neutral-900 py-6">
+            <h1 className="text-xl font-extrabold text-primary-100">
+              DONATION LEDGER
+            </h1>
+            <ul className="flex flex-col gap-4">
               {profile.donations?.map((donation) => (
-                <li key={donation.id} className="list-disc text-neutral-700">
-                  Anonymous donated {donation.amount} Sol to {profile.username}
+                <li key={donation.id} className=" text-neutral-700">
+                  {truncateWallet(donation.from_id.users.wallet_address)}{" "}
+                  donated {donation.amount} SOL to {profile.username}
                 </li>
               ))}
+              {profile.donations.length === 0 && (
+                <h2 className="pt-16 text-neutral-700 sm:pt-32">
+                  No donations has been made yet...
+                </h2>
+              )}
             </ul>
           </div>
         </div>
@@ -233,7 +239,9 @@ export const getServerSideProps = async ({
 
   const { data: profiles, error } = await supabase
     .from("profiles")
-    .select("*, users(wallet_address), donations!donations_to_id_fkey(*)")
+    .select(
+      "*, users(wallet_address), donations!donations_to_id_fkey(*, from_id(*, users(*)))"
+    )
     .eq("username", username);
 
   if (error) {

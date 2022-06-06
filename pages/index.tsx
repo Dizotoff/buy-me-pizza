@@ -11,6 +11,10 @@ import { Button } from "../components/Button";
 import DonationsPanel from "../components/DonationsPanel";
 import { useGetUser, useSetUser } from "../context/AuthProvider";
 import { supabase } from "../utils/supabaseClient";
+import Lottie from "react-lottie";
+import * as pizza1 from "../public/graphics/pizza-1.json";
+import * as pizza2 from "../public/graphics/pizza-2.json";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const user = useGetUser();
@@ -46,6 +50,25 @@ const Home: NextPage = () => {
     }
   };
 
+  const lottieAnimationPrimary = {
+    loop: true,
+    autoplay: true,
+    //@ts-ignore
+    animationData: pizza2.default,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+  const lottieAnimationSecondary = {
+    loop: true,
+    autoplay: true,
+    //@ts-ignore
+    animationData: pizza1.default,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
   return (
     <>
       <Head>
@@ -59,10 +82,10 @@ const Home: NextPage = () => {
 
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
         {/*Accept donation in crypto... banner*/}
-        <section className="grid grid-cols-1 items-center justify-between gap-20 py-24 sm:grid-cols-2  sm:gap-0 sm:py-52">
+        <section className="grid grid-cols-1 items-center justify-between gap-20 py-12 sm:grid-cols-2  sm:gap-0 sm:py-52">
           <div>
             <h2 className="max-w-sm text-5xl font-extrabold text-white sm:max-w-2xl sm:text-6xl">
-              ACCEPT DONATIONS IN CRYPTO{" "}
+              ACCEPT DONATIONS IN CRYPTO ON YOUR WEBSITE{" "}
               <span className="text-primary-500">FOR FREE</span>
             </h2>
             <p className="pt-3 text-sm text-neutral-500 sm:text-base">
@@ -91,15 +114,7 @@ const Home: NextPage = () => {
               </div>
             )}
           </div>
-          <Image
-            src={"/images/pizza-toxic.png"}
-            alt="Picture of the something nice"
-            width={1}
-            height={1}
-            priority
-            layout="responsive"
-            objectFit="contain"
-          />
+          <Lottie options={lottieAnimationPrimary} />
         </section>
         {/*How does this work... banner*/}
         <section className="flex flex-col items-center justify-between gap-40 sm:flex-row sm:gap-0">
@@ -107,8 +122,14 @@ const Home: NextPage = () => {
             <h2 className="text-3xl font-bold text-white">HOW DOES IT WORK?</h2>
             <ul className="list-inside list-disc text-neutral-300">
               <li className="pt-6 font-normal">Connect your wallet</li>
-              <li className="pt-6">Chose a flavor</li>
-              <li className="pt-6">Press donate</li>
+              <li className="pt-6">Claim your username</li>
+              <li className="pt-6">
+                Share your personal link so others can send you SOL or...
+              </li>
+              <li className="pt-6">
+                Use Javascript widget to handle donations right at your website
+                (coming soon)
+              </li>
             </ul>
             <p className="pt-6 font-bold text-primary-100">
               ...it&apos;s that easy!
@@ -126,14 +147,7 @@ const Home: NextPage = () => {
               0 % commission fees{" "}
             </p>
           </span>
-          <Image
-            src={"/images/slicer.png"}
-            alt="Picture of the something nice"
-            width={1}
-            height={1}
-            layout="responsive"
-            objectFit="contain"
-          />
+          <Lottie options={lottieAnimationSecondary} />
         </section>
         {/*Meet the builders... banner*/}
         <section className="items-center justify-between pb-24 sm:pb-52">
@@ -147,11 +161,11 @@ const Home: NextPage = () => {
                   objectFit="cover"
                   alt="pizza"
                   layout="fill"
-                  src={"/images/pizza-toxic.png"}
+                  src={"/images/mike.jpeg"}
                 ></Image>
               </figure>
               <span className="flex justify-center gap-3 pt-4">
-                <p className="text-xl font-medium">@yourdad</p>
+                <p className="text-xl font-medium">@mike</p>
                 <Image
                   src="/icons/twitter.svg"
                   alt="twitter"
@@ -172,23 +186,27 @@ const Home: NextPage = () => {
                   objectFit="cover"
                   alt="pizza"
                   layout="fill"
-                  src={"/images/pizza-toxic.png"}
+                  src={"/images/dmytro.png"}
                 ></Image>
               </figure>
               <span className="flex justify-center gap-3 pt-4">
-                <p className="text-xl font-medium">@yourmom</p>
-                <Image
-                  src="/icons/twitter.svg"
-                  alt="twitter"
-                  height={30}
-                  width={30}
-                />
-                <Image
-                  src="/icons/web.svg"
-                  alt="twitter"
-                  height={30}
-                  width={30}
-                />
+                <p className="text-xl font-medium">@dmytro</p>
+                <Link href="https://twitter.com/dmytro_eth">
+                  <Image
+                    src="/icons/twitter.svg"
+                    alt="twitter"
+                    height={30}
+                    width={30}
+                  />
+                </Link>
+                <Link href="https://dmytroizotov.com/">
+                  <Image
+                    src="/icons/web.svg"
+                    alt="twitter"
+                    height={30}
+                    width={30}
+                  />
+                </Link>
               </span>
             </article>
           </div>

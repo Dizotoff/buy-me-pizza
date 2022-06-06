@@ -23,7 +23,11 @@ export const UploadableImage = ({
           onChange={onUpload}
         />
       )}
-      <figure className="relative h-28 w-28">
+      <figure
+        className={classnames("relative h-28 w-28 transition-all", {
+          " duration-500 hover:invert": isUploadable,
+        })}
+      >
         <Image
           layout="fill"
           src={src ? src : "/images/pizza-toxic.png"}

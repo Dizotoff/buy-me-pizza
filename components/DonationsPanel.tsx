@@ -91,12 +91,12 @@ const DonationsPanel = ({
       <h2 className="text-center text-3xl font-bold text-white">
         DONATE SOME PIZZAS TO {name?.toUpperCase()}
       </h2>
-      <div className="grid grid-cols-4 gap-8 py-10">
+      <div className="grid grid-cols-2 gap-6 py-10 xl:grid-cols-4">
         {donationOptions.map((item, index) => (
           <article
             key={index}
             className={classNames(
-              "cursor-pointer rounded-lg border-2 px-2 py-3",
+              "cursor-pointer rounded-lg border-2 py-6 transition-all hover:border-primary-500",
               { "border-black": item.id !== selectedOption?.id },
               { "border-primary-500": item.id === selectedOption?.id }
             )}
