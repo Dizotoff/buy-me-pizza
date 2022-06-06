@@ -127,8 +127,8 @@ const Home: NextPage = () => {
                 Share your personal link so others can send you SOL or...
               </li>
               <li className="pt-6">
-                Use Javascript widget to handle donations right at your website
-                (coming soon)
+                Use our Javascript widget to handle donations right on your
+                website (coming soon)
               </li>
             </ul>
             <p className="pt-6 font-bold text-primary-100">
