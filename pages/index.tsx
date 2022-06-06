@@ -109,7 +109,7 @@ const Home: NextPage = () => {
                   />
                 </span>
                 <Button onClick={() => handleButtonClick()}>
-                  CLAIM THIS USERNAME
+                  Claim Username
                 </Button>
               </div>
             )}

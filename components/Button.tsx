@@ -17,12 +17,12 @@ export const Button = ({
       disabled={disabled}
       onClick={onClick}
       className={classNames(
-        "flex items-center justify-center rounded-sm px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base",
+        "flex items-center justify-center rounded-md px-3 py-2 text-sm font-bold text-white sm:py-3 sm:px-5 sm:text-base",
         {
           "bg-neutral-700": disabled,
         },
         {
-          "bg-primary-500": !disabled,
+          "bg-[#512DA8]": !disabled,
         }
       )}
     >
