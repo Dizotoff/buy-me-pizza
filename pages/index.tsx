@@ -14,7 +14,6 @@ import { supabase } from "../utils/supabaseClient";
 import Lottie from "react-lottie";
 import * as pizza1 from "../public/graphics/pizza-1.json";
 import * as pizza2 from "../public/graphics/pizza-2.json";
-import Link from "next/link";
 
 const Home: NextPage = () => {
   const user = useGetUser();
@@ -166,18 +165,30 @@ const Home: NextPage = () => {
               </figure>
               <span className="flex justify-center gap-3 pt-4">
                 <p className="text-xl font-medium">@mike</p>
-                <Image
-                  src="/icons/twitter.svg"
-                  alt="twitter"
-                  height={30}
-                  width={30}
-                />
-                <Image
-                  src="/icons/web.svg"
-                  alt="twitter"
-                  height={30}
-                  width={30}
-                />
+                <a
+                  target="_blank"
+                  href="https://michaeljuarezfe.netlify.app"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src="/icons/twitter.svg"
+                    alt="twitter"
+                    height={30}
+                    width={30}
+                  />
+                </a>
+                <a
+                  target="_blank"
+                  href="https://twitter.com/yesplayerme"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src="/icons/web.svg"
+                    alt="twitter"
+                    height={30}
+                    width={30}
+                  />
+                </a>
               </span>
             </article>
             <article className="flex flex-col">
@@ -191,22 +202,30 @@ const Home: NextPage = () => {
               </figure>
               <span className="flex justify-center gap-3 pt-4">
                 <p className="text-xl font-medium">@dmytro</p>
-                <Link href="https://twitter.com/dmytro_eth">
+                <a
+                  target="_blank"
+                  href="https://twitter.com/dmytro_eth"
+                  rel="noopener noreferrer"
+                >
                   <Image
                     src="/icons/twitter.svg"
                     alt="twitter"
                     height={30}
                     width={30}
                   />
-                </Link>
-                <Link href="https://dmytroizotov.com/">
+                </a>
+                <a
+                  target="_blank"
+                  href="https://dmytroizotov.com/"
+                  rel="noopener noreferrer"
+                >
                   <Image
                     src="/icons/web.svg"
                     alt="twitter"
                     height={30}
                     width={30}
                   />
-                </Link>
+                </a>
               </span>
             </article>
           </div>
