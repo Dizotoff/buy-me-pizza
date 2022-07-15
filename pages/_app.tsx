@@ -51,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <WalletModalProvider>
             <AuthProvider>
               <Layout>
-                <PlausibleProvider domain="example.com">
+                <PlausibleProvider domain="buymea.pizza">
                   <Component {...pageProps} />
                 </PlausibleProvider>
               </Layout>
