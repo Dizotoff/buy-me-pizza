@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-
+import PlausibleProvider from "next-plausible";
 import React, { useMemo } from "react";
 import {
   ConnectionProvider,
@@ -45,17 +45,21 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <AuthProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </AuthProvider>
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <AuthProvider>
+              <Layout>
+                <PlausibleProvider domain="example.com">
+                  <Component {...pageProps} />
+                </PlausibleProvider>
+              </Layout>
+            </AuthProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </>
   );
 }
 
