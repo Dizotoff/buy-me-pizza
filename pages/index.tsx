@@ -104,7 +104,7 @@ const Home: NextPage = () => {
                     }}
                     value={inputValue}
                     placeholder="yourname"
-                    className="w-24 bg-black text-neutral-500 outline-none"
+                    className="w-44 bg-black text-neutral-500 outline-none"
                   />
                 </span>
                 <Button onClick={() => handleButtonClick()}>
@@ -160,30 +160,19 @@ const Home: NextPage = () => {
                   objectFit="cover"
                   alt="pizza"
                   layout="fill"
-                  src={"/images/mike.jpeg"}
+                  src={"/images/maik.jpeg"}
                 ></Image>
               </figure>
               <span className="flex justify-center gap-3 pt-4">
-                <p className="text-xl font-medium">@mike</p>
+                <p className="text-xl font-medium">@MAIK</p>
+
                 <a
                   target="_blank"
-                  href="https://michaeljuarezfe.netlify.app"
+                  href="https://twitter.com/maikwithm"
                   rel="noopener noreferrer"
                 >
                   <Image
                     src="/icons/twitter.svg"
-                    alt="twitter"
-                    height={30}
-                    width={30}
-                  />
-                </a>
-                <a
-                  target="_blank"
-                  href="https://twitter.com/yesplayerme"
-                  rel="noopener noreferrer"
-                >
-                  <Image
-                    src="/icons/web.svg"
                     alt="twitter"
                     height={30}
                     width={30}
@@ -201,7 +190,7 @@ const Home: NextPage = () => {
                 ></Image>
               </figure>
               <span className="flex justify-center gap-3 pt-4">
-                <p className="text-xl font-medium">@dmytro</p>
+                <p className="text-xl font-medium">@DMYTRO</p>
                 <a
                   target="_blank"
                   href="https://twitter.com/dmytro_eth"
@@ -209,18 +198,6 @@ const Home: NextPage = () => {
                 >
                   <Image
                     src="/icons/twitter.svg"
-                    alt="twitter"
-                    height={30}
-                    width={30}
-                  />
-                </a>
-                <a
-                  target="_blank"
-                  href="https://dmytroizotov.com/"
-                  rel="noopener noreferrer"
-                >
-                  <Image
-                    src="/icons/web.svg"
                     alt="twitter"
                     height={30}
                     width={30}
