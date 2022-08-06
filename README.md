@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) with [Supabase](https://supabase.com/) 
 
 ## Getting Started
 
-First, create an free instance of Supabase project, open the Supabase SQL console and copy paste `db.sql` file from the project root. Copy paste .env.example file to .env and plug the environment keys which are exposed in project settings in Supabase.
+First, create a free instance of Supabase project, open the Supabase SQL console and execute `db.sql` file from the project root there. Grap the env variables from the project settings. Refer to .env.example file for the needed keys.
 
 Secondly, run the Next.js development server:
 
