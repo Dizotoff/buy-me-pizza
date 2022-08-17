@@ -19,6 +19,7 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import AuthProvider from "../context/AuthProvider";
 import Layout from "../components/Layout";
+import Head from "next/head";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -46,6 +47,23 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            (function () {
+              const s1 = document.createElement("script");
+              const s0 = document.getElementsByTagName("script")[0];
+              s1.async = true;
+              s1.src = "http://localhost:3000/api/widget/walletAddress";
+              s1.charset = "UTF-8";
+              s1.setAttribute("crossorigin", "*");
+              s0.parentNode.insertBefore(s1, s0);
+            })();
+            `,
+          }}
+        ></script>
+      </Head>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
