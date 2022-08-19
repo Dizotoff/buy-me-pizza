@@ -24,9 +24,11 @@ const Home: NextPage = () => {
   const [inputValue, setInputValue] = useState<string>("");
 
   const handleButtonClick = async () => {
+    const trimmedInputValue = inputValue.trim();
+
     if (!user) {
       setVisible(true);
-    } else if (inputValue !== "" && user) {
+    } else if (trimmedInputValue !== "" && user) {
       const toastId = toast.loading("Claiming the username...");
 
       const { data, error } = await supabase

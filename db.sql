@@ -12,7 +12,7 @@ create table profiles (
   id uuid references auth.users on delete cascade not null,
   createdAt timestamp with time zone default timezone('utc'::text, now()) not null,
   updatedAt timestamp with time zone default timezone('utc'::text, now()) not null,
-  username text unique,
+  username text unique not null,
   avatar_url text,
   website text,
   description text,
