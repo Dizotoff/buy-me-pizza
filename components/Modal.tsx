@@ -38,7 +38,7 @@ export const Modal = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="mx-auto flex max-w-sm flex-col gap-6 rounded bg-[#11141F] p-6 ">
+              <Dialog.Panel className="mx-auto flex max-w-lg flex-col gap-6 rounded bg-[#11141F] p-6 ">
                 <div className="flex flex-col gap-6">{children}</div>
               </Dialog.Panel>
             </Transition.Child>

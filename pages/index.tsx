@@ -14,7 +14,6 @@ import { supabase } from "../utils/supabaseClient";
 import Lottie from "react-lottie";
 import * as pizza1 from "../public/graphics/pizza-1.json";
 import * as pizza2 from "../public/graphics/pizza-2.json";
-import posthog from "posthog-js";
 
 const Home: NextPage = () => {
   const user = useGetUser();
@@ -25,7 +24,6 @@ const Home: NextPage = () => {
   const [inputValue, setInputValue] = useState<string>("");
 
   const handleButtonClick = async () => {
-    posthog.capture("Claim", { username: inputValue });
     if (!user) {
       setVisible(true);
     } else if (inputValue !== "" && user) {

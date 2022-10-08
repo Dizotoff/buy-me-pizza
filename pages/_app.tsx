@@ -20,32 +20,11 @@ import AuthProvider from "../context/AuthProvider";
 import Layout from "../components/Layout";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import posthog from "posthog-js";
-import { posthogConfig, posthogId } from "../utils/posthogClient";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-
-  // Track page views
-  useEffect(() => {
-    const onRouteChangeComplete = () => {
-      if (posthogId) {
-        posthog.capture("$pageview");
-      }
-    };
-    if (posthogId) {
-      posthog.init(posthogId, posthogConfig);
-    }
-    router.events.on("routeChangeComplete", onRouteChangeComplete);
-
-    return () => {
-      router.events.off("routeChangeComplete", onRouteChangeComplete);
-    };
-  }, [router.events]);
-
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
   const network = WalletAdapterNetwork.Devnet;
 

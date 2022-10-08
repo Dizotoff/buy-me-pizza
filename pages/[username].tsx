@@ -21,7 +21,9 @@ type ExtendedProfile = Profile & {
 };
 
 const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isUsernameModalOpen, setIsUsernameModalOpen] =
+    useState<boolean>(false);
+  const [isWidgetModalOpen, setIsWidgetModalOpen] = useState<boolean>(false);
   const [usernameValue, setUsernameValue] = useState<string>("");
   const user = useGetUser();
   const router = useRouter();
@@ -47,7 +49,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
       toast.success("Username was changed");
 
       router.push(`/${usernameValue}`);
-      setIsModalOpen(false);
+      setIsUsernameModalOpen(false);
     }
   };
 
@@ -69,7 +71,6 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
       const toastId = toast.loading("Uploading avatar image...");
       const fileName = v4();
       const fileExtension = file?.type?.split("/")[1];
-      console.log(file, `${profile.id}/${fileName}.${fileExtension}`);
       const { data: image, error } = await supabase.storage
         .from("avatars")
         .upload(`${profile.id}/${fileName}.${fileExtension}`, file);
@@ -116,6 +117,16 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
     }
   };
 
+  const scriptSourceCode = `<script>(function () {
+    const s1 = document.createElement("script");
+    const s0 = document.getElementsByTagName("script")[0];
+    s1.async = true;
+    s1.src = "https://buymea.pizza/api/widget/${profile.users.wallet_address}";
+    s1.charset = "UTF-8";
+    s1.setAttribute("crossorigin", "*");
+    s0.parentNode.insertBefore(s1, s0);
+  })();</script>`;
+
   return (
     <div className="w-full bg-black text-white antialiased">
       <Head>
@@ -127,7 +138,10 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
       </Head>
       <Toaster />
 
-      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal
+        open={isUsernameModalOpen}
+        onClose={() => setIsUsernameModalOpen(false)}
+      >
         <>
           <h1 className="text-center font-bold text-white">
             CHOOSE A NEW USERNAME
@@ -149,6 +163,36 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
           </Button>
         </>
       </Modal>
+      <Modal
+        open={isWidgetModalOpen}
+        onClose={() => setIsWidgetModalOpen(false)}
+      >
+        <>
+          <h1 className="text-center font-bold text-white">Widget Code</h1>
+          <textarea
+            disabled
+            className="h-72 w-96 rounded-md border border-neutral-900 bg-black  py-2 pl-2 text-sm text-neutral-700 outline-none focus:border-primary-500 active:border-primary-500"
+            value={scriptSourceCode}
+          ></textarea>
+
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(scriptSourceCode);
+              toast.success("Copied!");
+              setIsWidgetModalOpen(false);
+            }}
+          >
+            Copy to clipboard
+          </Button>
+          <p className="w-80 text-xs text-white">
+            {`Simply insert this code at the end of the 
+            `}
+            <span className="text-yellow">{`<body>`} </span>
+            {`tag on your website, right before the`}{" "}
+            <span className="text-yellow">{`</body>`}</span> {`closing tag.`}
+          </p>
+        </>
+      </Modal>
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-16">
         <div className="flex flex-col items-center justify-between gap-20 py-6 sm:flex-row sm:gap-0">
           <span className="flex w-fit items-center gap-6">
@@ -163,24 +207,42 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
               <p className="text-xl font-extrabold text-primary-100">
                 {profile.username}
               </p>
-              <p className="text-md  font-extrabold text-primary-100">
+              <p className="text-md font-extrabold text-primary-100">
                 {truncateWallet(profile.users.wallet_address)}
+                {"  - "}
+                <a
+                  target={"_blank"}
+                  rel="noreferrer"
+                  href={`https://solscan.io/account/${profile.users.wallet_address}`}
+                  className="text-xs font-extrabold text-primary-100 underline"
+                >
+                  Solscan
+                </a>
               </p>
             </div>
-            {isCurrentUserOwner && (
+          </span>
+          {isCurrentUserOwner && (
+            <div className="flex gap-3">
               <Button
                 onClick={() => {
-                  setIsModalOpen(true);
+                  setIsUsernameModalOpen(true);
                 }}
               >
                 UPDATE NAME
               </Button>
-            )}
-          </span>
+              <Button
+                onClick={() => {
+                  setIsWidgetModalOpen(true);
+                }}
+              >
+                ADD WIDGET
+              </Button>
+            </div>
+          )}
           <a
             target="_blank"
             rel="noreferrer"
-            className="group flex cursor-pointer gap-4 text-xl font-extrabold transition-all hover:text-primary-100"
+            className="group flex cursor-pointer gap-4 text-xl font-extrabold transition-all"
             href={`https://twitter.com/intent/tweet?text=Hey, you can buymea.pizza/${profile.username} with @Solana`}
           >
             <Image
@@ -188,8 +250,9 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
               alt="twitter"
               height={30}
               width={30}
+              className="text-primary-100"
             />
-            <p>SHARE ON TWITTER</p>
+            <p className="">SHARE ON TWITTER</p>
           </a>
         </div>
 
