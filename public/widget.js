@@ -1,39 +1,31 @@
 (function () {
   class Widget {
-    constructor({ position = "bottom-right" } = {}) {
-      this.position = this.getPosition(position);
+    constructor({} = {}) {
+      this.username = username;
       this.open = false;
       this.initialize();
       this.createStyles();
     }
 
-    getPosition(position) {
-      const [vertical, horizontal] = position.split("-");
-
-      return {
-        [vertical]: "30px",
-        [horizontal]: "30px",
-      };
-    }
-
     initialize() {
       const container = document.createElement("div");
       container.style.position = "fixed";
-      Object.keys(this.position).forEach((key) => {
-        container.style[key] = this.position[key];
-      });
+      container.style.bottom = "16px";
+      container.style.right = "32px";
       document.body.appendChild(container);
 
       const buttonContainer = document.createElement("div");
       buttonContainer.classList.add("button-container");
 
       const pizzaIcon = document.createElement("img");
-      pizzaIcon.src = "/images/pizza-toxic.png";
+      pizzaIcon.src =
+        "https://www.buymea.pizza/_next/image?url=%2Fimages%2Fpizza-toxic.png&w=1920&q=75";
       pizzaIcon.classList.add("pizza-icon");
       this.chatIcon = pizzaIcon;
 
       const closeIcon = document.createElement("img");
-      closeIcon.src = "/images/close.png";
+      closeIcon.src =
+        "https://www.buymea.pizza/_next/image?url=%2Fimages%2Fclose.png&w=1920&q=75";
       closeIcon.classList.add("icon", "hidden");
       this.closeIcon = closeIcon;
 
@@ -208,6 +200,8 @@
       labelPay10.appendChild(radioboxPay10);
       labelPay10.appendChild(descriptionPay10);
 
+      optionsContainer.appendChild(labelPay10);
+
       const radioboxPay20 = document.createElement("input");
       radioboxPay20.type = "radio";
       radioboxPay20.id = "pay20";
@@ -244,26 +238,23 @@
         'input[name="pay"]:checked'
       ).value;
 
-      const isPhantomInstalled = window.phantom?.solana?.isPhantom;
-      if (isPhantomInstalled) {
-        // LOOKING FOR A HERO TO IMPLEMENT THIS
-        // The idea is to use phantom provider to sign the transaction and submit it via Solana JSON RPC connection,
-        // so that the payment is handled on the website directly.
-        // const provider = window.phantom?.solana;
-        // const resp = provider.connect().then((response) => {
-        // const publicKey = response.publicKey;
-        // const connection = new Connection(network);
-        // const transaction = new Transaction();
-        // const { signature } = await provider.request({
-        //  method: "signAndSendTransaction",
-        // params: {
-        //   message: bs58.encode(transaction.serializeMessage()),
-        //},
-        //});
-      }
+      // LOOKING FOR A HERO TO IMPLEMENT THIS
+      // The idea is to use phantom provider to sign the transaction and submit it via Solana JSON RPC connection,
+      // so that the payment is handled on the website directly and there's no need to redirect to buymea.pizza website
+      // const provider = window.phantom?.solana;
+      // const resp = provider.connect().then((response) => {
+      // const publicKey = response.publicKey;
+      // const connection = new Connection(network);
+      // const transaction = new Transaction();
+      // const { signature } = await provider.request({
+      //  method: "signAndSendTransaction",
+      // params: {
+      //   message: bs58.encode(transaction.serializeMessage()),
+      //},
+      //});
 
       window.open(
-        `http://localhost:3000/pay/${this.walletAddress}?amount=${amountToPay}`,
+        `http://localhost:3000/${this.username}?pay=${amountToPay}`,
         "_blank"
       );
     }

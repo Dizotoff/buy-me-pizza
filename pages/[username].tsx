@@ -2,7 +2,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { UploadableImage } from "../components/UploadableImage";
 
@@ -27,6 +27,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
   const [usernameValue, setUsernameValue] = useState<string>("");
   const user = useGetUser();
   const router = useRouter();
+
   const isCurrentUserOwner =
     user?.walletAddress === profile.users.wallet_address;
 
@@ -121,7 +122,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
     const s1 = document.createElement("script");
     const s0 = document.getElementsByTagName("script")[0];
     s1.async = true;
-    s1.src = "https://buymea.pizza/api/widget/${profile.users.wallet_address}";
+    s1.src = "https://buymea.pizza/api/widget/${profile.username}";
     s1.charset = "UTF-8";
     s1.setAttribute("crossorigin", "*");
     s0.parentNode.insertBefore(s1, s0);

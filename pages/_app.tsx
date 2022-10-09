@@ -48,21 +48,21 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
             (function () {
               const s1 = document.createElement("script");
               const s0 = document.getElementsByTagName("script")[0];
               s1.async = true;
-              s1.src = "http://localhost:3000/api/widget/walletAddress";
+              s1.src = "http://localhost:3000/api/widget/dmytro";
               s1.charset = "UTF-8";
               s1.setAttribute("crossorigin", "*");
               s0.parentNode.insertBefore(s1, s0);
             })();
             `,
           }}
-        ></script>
+        ></script> */}
       </Head>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
