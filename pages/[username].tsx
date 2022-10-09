@@ -13,7 +13,7 @@ import { useGetUser } from "../context/AuthProvider";
 import { Profile } from "../models/profile";
 import { supabase } from "../utils/supabaseClient";
 import { v4 } from "uuid";
-import { truncateWallet } from "../utils/helpers";
+import { slugify, truncateWallet } from "../utils/helpers";
 
 type ExtendedProfile = Profile & {
   users: { wallet_address: string };
@@ -34,9 +34,17 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
   const handleUsernameSubmit = async () => {
     const toastId = toast.loading("Claiming the username...");
 
+    const trimmedUsername = slugify(usernameValue.trim());
+
+    if (trimmedUsername === "") {
+      toast.error("This username is not valid");
+      toast.dismiss(toastId);
+      return;
+    }
+
     const { data, error } = await supabase
       .from<Profile>("profiles")
-      .update({ username: usernameValue })
+      .update({ username: trimmedUsername })
       .match({ username: profile.username });
 
     toast.dismiss(toastId);
@@ -49,7 +57,7 @@ const UserPage = ({ profile }: { profile: ExtendedProfile }) => {
     if (data) {
       toast.success("Username was changed");
 
-      router.push(`/${usernameValue}`);
+      router.push(`/${trimmedUsername}`);
       setIsUsernameModalOpen(false);
     }
   };
