@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "./Button";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { SystemProgram, Transaction, PublicKey } from "@solana/web3.js";
 import { useGetSolPrice, useGetUser } from "../context/AuthProvider";
 import classNames from "classnames";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { supabase } from "../utils/supabaseClient";
+import { useRouter } from "next/router";
 
 const donationOptionsUSD = [1, 5, 10, 20];
 
@@ -33,6 +33,7 @@ const DonationsPanel = ({
 }) => {
   const [donationOptions, setDonationOptions] = useState<Donation[]>([]);
   const [selectedOption, setSelectedOption] = useState<Donation>();
+  const router = useRouter();
   const { connection } = useConnection();
   const { setVisible, visible } = useWalletModal();
   const user = useGetUser();
@@ -84,7 +85,25 @@ const DonationsPanel = ({
     if (solPrice) {
       calculateDonationsOptions();
     }
-  }, [solPrice]);
+  }, [solPrice, calculateDonationsOptions]);
+
+  // handle payments via widget using query parameters
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { pay: payUsd } = router.query;
+
+    if (payUsd) {
+      const chosenViaWidgetOption = donationOptions.find(
+        (option) => (option.usdValue = Number(payUsd))
+      );
+
+      if (chosenViaWidgetOption) {
+        setSelectedOption(chosenViaWidgetOption);
+        onDonateClick(chosenViaWidgetOption);
+        router.replace(`/${name}`, undefined, { shallow: true });
+      }
+    }
+  }, [router.isReady, router.query, donationOptions, onDonateClick]);
 
   return (
     <div className="max-w-xl">

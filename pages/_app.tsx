@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import PlausibleProvider from "next-plausible";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
@@ -19,6 +18,8 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import AuthProvider from "../context/AuthProvider";
 import Layout from "../components/Layout";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -46,14 +47,29 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        {/* <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            (function () {
+              const s1 = document.createElement("script");
+              const s0 = document.getElementsByTagName("script")[0];
+              s1.async = true;
+              s1.src = "http://localhost:3000/api/widget/dmytro";
+              s1.charset = "UTF-8";
+              s1.setAttribute("crossorigin", "*");
+              s0.parentNode.insertBefore(s1, s0);
+            })();
+            `,
+          }}
+        ></script> */}
+      </Head>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <AuthProvider>
               <Layout>
-                <PlausibleProvider domain="buymea.pizza">
-                  <Component {...pageProps} />
-                </PlausibleProvider>
+                <Component {...pageProps} />
               </Layout>
             </AuthProvider>
           </WalletModalProvider>
