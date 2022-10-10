@@ -18,7 +18,8 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import AuthProvider from "../context/AuthProvider";
 import Layout from "../components/Layout";
-import Head from "next/head";
+import Script from "next/script";
+
 import { useRouter } from "next/router";
 
 // Default styles that can be overridden by your app
@@ -47,23 +48,22 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <Head>
-        {/* <script
-          dangerouslySetInnerHTML={{
-            __html: `
+      <Script
+        id="bmp-widget"
+        dangerouslySetInnerHTML={{
+          __html: `
             (function () {
               const s1 = document.createElement("script");
               const s0 = document.getElementsByTagName("script")[0];
               s1.async = true;
-              s1.src = "http://localhost:3000/api/widget/dmytro";
+              s1.src = "http://buymea.pizza/api/widget/dmytro";
               s1.charset = "UTF-8";
               s1.setAttribute("crossorigin", "*");
               s0.parentNode.insertBefore(s1, s0);
             })();
             `,
-          }}
-        ></script> */}
-      </Head>
+        }}
+      ></Script>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
