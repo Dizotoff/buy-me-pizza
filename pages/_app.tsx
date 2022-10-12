@@ -56,7 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               const s1 = document.createElement("script");
               const s0 = document.getElementsByTagName("script")[0];
               s1.async = true;
-              s1.src = "https://buymea.pizza/api/widget/dmytro";
+              s1.src = "https://www.buymea.pizza/api/widget/dmytro";
               s1.charset = "UTF-8";
               s1.setAttribute("crossorigin", "*");
               s0.parentNode.insertBefore(s1, s0);
