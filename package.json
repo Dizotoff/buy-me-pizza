@@ -15,7 +15,7 @@
     "@headlessui/react": "^1.6.3",
     "@solana/wallet-adapter-base": "^0.9.5",
     "@solana/wallet-adapter-react": "^0.15.5",
-    "@solana/wallet-adapter-react-ui": "^0.9.7",
+    "@solana/wallet-adapter-react-ui": "^0.9.20",
     "@solana/wallet-adapter-wallets": "^0.19.1",
     "@solana/web3.js": "^1.42.0",
     "@supabase/supabase-js": "^1.35.3",
